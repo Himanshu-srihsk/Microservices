@@ -2,6 +2,10 @@ server:
    port: 8083
 
 spring:
+   application:
+       name: USERSERVICE 
+   profiles:
+      active: dev
    datasource:
       url: jdbc:mysql://localhost:3306/microservices
       username: root
@@ -14,16 +18,17 @@ spring:
       properties:
          hibernate:
            dialect: org.hibernate.dialect.MySQL8Dialect 
-   application:
-       name: USERSERVICE        
-eureka: 
-    instance:
-      prefer-ip-address: true 
-    client:
-      fetch-registry: true   
-      register-with-eureka: true 
-      service-url:
-         defaultZone: http://localhost:8086/eureka
+   
+   config:
+       import: optional:configserver:http://localhost:8088           
+#eureka: 
+#    instance:
+#      prefer-ip-address: true 
+#    client:
+#      fetch-registry: true   
+#      register-with-eureka: true 
+#      service-url:
+#         defaultZone: http://localhost:8086/eureka
          
               
             
