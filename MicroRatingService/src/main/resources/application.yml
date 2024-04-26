@@ -5,7 +5,7 @@ spring:
        database: microservices
        
    application:
-       name: RATING-SERVICE     
+       name: RATINGSERVICE     
 
 server:
    port: 8085       

@@ -13,7 +13,7 @@ spring:
       show-sql: true 
        
    application:
-       name: HOTEL-SERVICE   
+       name: HOTELSERVICE   
      
 eureka: 
     instance:
