@@ -18,6 +18,7 @@ import com.example.user.service.MicroUserService.entities.Hotel;
 import com.example.user.service.MicroUserService.entities.Rating;
 import com.example.user.service.MicroUserService.entities.User;
 import com.example.user.service.MicroUserService.exceptions.ResourceNotFoundException;
+import com.example.user.service.MicroUserService.externalService.HotelService;
 import com.example.user.service.MicroUserService.services.UserService;
 
 @Service
@@ -26,7 +27,8 @@ public class UserServiceImpl implements UserService {
     private UserRepo userRepo;
 	@Autowired
 	private RestTemplate restTemplate;
-	
+	@Autowired
+	private HotelService hotelService;
 	private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 	
 	@Override
@@ -60,12 +62,21 @@ public class UserServiceImpl implements UserService {
 		//http://localhost:8084/hotels/98bfffdc-4456-44a7-abca-a6a77d8bb237
 		
 		//get hotel info from ratings
+//		List<Rating> ratingList = ratings.stream().map((rating)->{
+//		ResponseEntity<Hotel> forEntity=restTemplate.getForEntity("http://HOTELSERVICE/hotels/"+rating.getHotelId(), Hotel.class);
+//		Hotel hotel= forEntity.getBody();
+//		logger.info("response status code:{}",forEntity.getStatusCode());
+//		rating.setHotel(hotel);
+//		return rating;
+//		}).collect(Collectors.toList());
+		
+		//working with Feign client
+		
 		List<Rating> ratingList = ratings.stream().map((rating)->{
-		ResponseEntity<Hotel> forEntity=restTemplate.getForEntity("http://HOTELSERVICE/hotels/"+rating.getHotelId(), Hotel.class);
-		Hotel hotel= forEntity.getBody();
-		logger.info("response status code:{}",forEntity.getStatusCode());
-		rating.setHotel(hotel);
-		return rating;
+			Hotel hotel = hotelService.getHotel(rating.getHotelId());
+			
+			rating.setHotel(hotel);
+			return rating;
 		}).collect(Collectors.toList());
 		
 		user.setRatings(ratingList);
