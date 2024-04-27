@@ -2,6 +2,8 @@ package com.example.user.service.MicroUserService.controllers;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,21 +18,42 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.user.service.MicroUserService.entities.User;
 import com.example.user.service.MicroUserService.services.UserService;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+
 @RestController
 @RequestMapping("/users")
+
 public class UserController {
 	@Autowired
 	private UserService userService;
+	
+	private Logger logger = LoggerFactory.getLogger(UserController.class);
+	
 	@PostMapping
   public ResponseEntity<User> createUser(@RequestBody User user){
 	  User createdUser= userService.saveUser(user);
 	  return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
   }
 	@GetMapping("/{userId}")
+	@CircuitBreaker(name = "ratingHotelBreaker", fallbackMethod = "ratingHotelFallback")
 	public ResponseEntity<User> getSingleUser(@PathVariable String userId){
 		User user= userService.getUser(userId);
 		return ResponseEntity.ok(user);
 	}
+	
+	public ResponseEntity<User> ratingHotelFallback(String userId, Exception ex){
+		logger.info("Falback is executed because service is down!!", ex.getMessage());
+	    User user=	
+	    		User.builder()
+	    		.email("dummy@gmail.com")
+	    		.name("Dummy")
+	    		.about("this is dummy creation as some services down !!")
+	    		.userId("112332")
+	    		.build();
+		return new ResponseEntity<>(user,HttpStatus.OK);
+		
+	}
+	
 	@GetMapping
 	public ResponseEntity<List<User>> getAllUser(){
 		List<User> allUsers = userService.getAllUser();
