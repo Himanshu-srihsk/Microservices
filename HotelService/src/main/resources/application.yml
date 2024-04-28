@@ -24,7 +24,12 @@ spring:
 #      fetch-registry: true   
 #      register-with-eureka: true 
 #      service-url:
-#         defaultZone: http://localhost:8086/eureka          
+#         defaultZone: http://localhost:8086/eureka    
+
+okta:
+  oauth2:
+    issuer: https://dev-81684010.okta.com/oauth2/default
+    audience: api://default         
         
  
   

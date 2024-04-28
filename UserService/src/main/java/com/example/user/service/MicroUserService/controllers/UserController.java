@@ -46,7 +46,7 @@ public class UserController {
 	public ResponseEntity<User> getSingleUser(@PathVariable String userId){
 		logger.info("Get Single user Handler: user Controller");
 		logger.info("Retry Count: {}", retryCount);
-		retryCount++;
+		//retryCount++;
 		
 		User user= userService.getUser(userId);
 		return ResponseEntity.ok(user);
